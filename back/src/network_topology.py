@@ -5,7 +5,7 @@ from ipmininet.ipovs_switch import IPOVSSwitch
 from ipmininet.ipswitch import IPSwitch
 from ipmininet.iptopo import IPTopo
 from ipmininet.router.config import RouterConfig
-from network_schema import Network, Node, NodeConfig, NodeInterface
+from network_schema import BGPConfig, BGPNeighbor, Network, Node, NodeConfig, NodeInterface
 from pkt_parser import is_ipv4_address
 from node_types import NodeType
 
@@ -122,6 +122,9 @@ class MiminetTopology(IPTopo):
             router = self.addRouter(node_id, use_v6=False, config=RouterConfig)
 
         self.__nodes[node_id] = router
+
+        if config.bgp is not None:
+            self.__set_network_configuration_time(15)
 
     def __find_interface(
         self, edge_id: str, node_interfaces: list[NodeInterface]

@@ -17,7 +17,7 @@ from network_schema import Network
 from network_topology import MiminetTopology, stp_enabled
 from node_types import NodeType
 from psutil import Process
-
+from net_utils.bgp import setup_bgp
 
 class MiminetNetwork(IPNet):
     def __init__(self, topo: MiminetTopology, network: Network):
@@ -46,6 +46,7 @@ class MiminetNetwork(IPNet):
         # Additional settings
         setup_vlans(self, self.__network_schema.nodes)
         setup_vtep_interfaces(self, self.__network_schema.nodes)
+        setup_bgp(self, self.__network_schema.nodes)
 
         # Stop the IPv6 multicast chatter on this IPv4-only emulation (see
         # __disable_ipv6); needed for the adaptive settle to see genuinely
