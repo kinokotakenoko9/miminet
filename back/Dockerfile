@@ -26,6 +26,7 @@ RUN apt-get update \
     libpcap-dev \
     libbsd-dev \
     openvswitch-switch \
+    frr \
  && pip3 install --upgrade pip \
  && rm -rf /var/lib/apt/lists/* \
  && touch /etc/network/interfaces \

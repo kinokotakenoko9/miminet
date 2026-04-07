@@ -1,8 +1,21 @@
 """Classes for deserializing a Miminet network"""
 
-from dataclasses import dataclass
-from typing import Union, Optional
+from dataclasses import dataclass, field
+from typing import List, Union, Optional
 
+@dataclass
+class BGPNeighbor:
+    ip: str
+    remote_as: str
+    weight: Optional[int] = None
+
+@dataclass
+class BGPConfig:
+    """Represents BGP settings for a router."""
+    local_asn: str
+    router_id: str
+    networks: List[str] = field(default_factory=list)
+    neighbors: List[BGPNeighbor] = field(default_factory=list)
 
 @dataclass
 class NodeData:
@@ -29,6 +42,7 @@ class NodeConfig:
         stp (int): 1 if spanning tree protocol (STP) is enabled; 2 if rapid spanning tree protocol (RSTP) is enabled; 0 otherwise.
         priority (Optional[int]): stp or rstp priority
         default_gw (str): Default gateway for the node.
+        bgp (Optional[BGPConfig]): BGP configuration.
     """
 
     label: str = ""
@@ -36,6 +50,7 @@ class NodeConfig:
     stp: int = 0
     priority: Optional[int] = None
     default_gw: str = ""
+    bgp: Optional[BGPConfig] = None
 
 
 @dataclass

@@ -4,7 +4,7 @@ from ipmininet.ipswitch import IPSwitch
 from ipmininet.ipovs_switch import IPOVSSwitch
 from ipmininet.iptopo import IPTopo
 from ipmininet.router.config import RouterConfig
-from network_schema import Network, Node, NodeConfig, NodeInterface
+from network_schema import BGPConfig, BGPNeighbor, Network, Node, NodeConfig, NodeInterface
 from pkt_parser import is_ipv4_address
 
 
@@ -94,6 +94,9 @@ class MiminetTopology(IPTopo):
 
         if default_gw:
             kwargs["routerDefaultRoute"] = f"via {default_gw}"
+
+        if config.bgp is not None:
+            self.__set_network_configuration_time(15)
 
         self.__nodes[node_id] = self.addRouter(node_id, **kwargs)
 

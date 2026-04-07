@@ -10,7 +10,7 @@ from network_schema import Network
 
 from net_utils.vlan import setup_vlans, clean_bridges
 from net_utils.vxlan import setup_vtep_interfaces, teardown_vtep_bridges
-
+from net_utils.bgp import setup_bgp
 
 class MiminetNetwork(IPNet):
     def __init__(self, topo: MiminetTopology, network: Network):
@@ -25,6 +25,7 @@ class MiminetNetwork(IPNet):
         # Additional settings
         setup_vlans(self, self.__network_schema.nodes)
         setup_vtep_interfaces(self, self.__network_schema.nodes)
+        setup_bgp(self, self.__network_schema.nodes)
 
         # Waiting for network setup
         time.sleep(self.__network_topology.network_configuration_time)
