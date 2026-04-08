@@ -6,6 +6,7 @@ $('#config_router').load("/config_router.html");
 $('#config_server').load("/config_server.html");
 $('#config_vlan').load("/config_vlan.html");
 $('#config_vxlan').load("/config_vxlan.html");
+$('#config_bgp').load("/config_bgp.html");
 
 const config_content_id = "#config_content";
 const config_main_form_id = "#config_main_form";
@@ -1256,6 +1257,31 @@ const DisableVXLANInputs = function (n) {
             .appendTo('head');
 
         $('#' + modalId).off('hidden.bs.modal.myNamespace');
+    });
+};
+
+const DisableBGPInputs = function (n) {
+    var modalId = 'BgpConfigModal' + n.data.id;
+
+    $(document).ready(function () {
+        $('#config_button_bgp').prop('disabled', false);
+
+        $('#' + modalId + ' :input').not('.btn-close').prop('disabled', true);
+        $('#' + modalId + ' #config_bgp_switch').prop('disabled', true);
+
+        $('<style>')
+            .prop('type', 'text/css')
+            .html(`
+                #${modalId} .bgp-networks-list .btn-danger,
+                #${modalId} .bgp-neighbors-list .btn-danger,
+                #${modalId} .add-bgp-network,
+                #${modalId} .add-bgp-neighbor {
+                    display: none !important;
+                }
+            `)
+            .appendTo('head');
+
+        $('#' + modalId).off('hidden.bs.modal');
     });
 };
 

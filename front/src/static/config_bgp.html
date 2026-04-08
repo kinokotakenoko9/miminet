@@ -1,0 +1,86 @@
+<script id="config_button_bgp_script" type="text/plain">
+    <button id="config_button_bgp" name="config_button_bgp" class="btn btn-outline-secondary btn-sm mt-2" type="button" data-bs-toggle="modal" data-bs-target="#BgpModal" data-toggle="tooltip" data-bs-placement="bottom" title="Настройте BGP: укажите AS, Router ID, анонсируемые сети и BGP-соседей.">
+        <i class='bx bx-network-chart fs-lg me-1'></i>
+        BGP
+    </button>
+</script>
+
+<script id="config_modal_bgp_script" type="text/plain">
+    <div class="modal" id="BgpModal" tabindex="-1" role="dialog" aria-hidden="true" data-focus-on="input:first">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="bgpConfigModalLabel">Настройка BGP</h5>
+                    <button id="bgpConfigurationCancelIcon" type="button" class="btn-close" data-dismiss="modal" aria-label="Закрыть">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="bgpAlertContainer"></div>
+                    <div id="switch_bgp" name="switch_bgp" class="form-group form-switch">
+                        <input id="config_bgp_switch" name="config_bgp_switch" type="checkbox" class="form-check-input">
+                        <label class="form-check-label" for="config_bgp_switch">Включить BGP</label>
+                    </div>
+                    </div>
+                <div id="modal_footer_bgp" class="modal-footer">
+                    <button id="bgpConfigurationSubmit" type="button" class="btn btn-primary">Закрыть и сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="config_table_bgp_script" type="text/plain">
+    <div class="container mt-3" id="config_table_bgp" style="max-height: 500px; overflow-y: auto;">
+        
+        <h6 class="mb-3">Основные настройки</h6>
+        <div class="mb-2 d-flex align-items-center">
+            <label class="form-label me-3" style="width: 150px;" for="bgpLocalAs">Local AS:</label>
+            <input type="number" class="form-control bgp-local-as" id="bgpLocalAs" placeholder="65001" style="flex: 1;" />
+        </div>
+        
+        <div class="mb-2 d-flex align-items-center">
+            <label class="form-label me-3" style="width: 150px;" for="bgpRouterId">Router ID:</label>
+            <input type="text" class="form-control bgp-router-id" id="bgpRouterId" placeholder="1.1.1.1" style="flex: 1;" />
+        </div>
+
+        <hr class="mb-3 mt-3">
+
+        <h6 class="mb-3">Networks</h6>
+        <div class="mb-2 d-flex align-items-center">
+            <label class="form-label me-3" style="width: 150px;" for="bgpNetworkInput">Подсеть:</label>
+            <input type="text" class="form-control bgp-network-input" id="bgpNetworkInput" placeholder="192.168.1.0/24" style="flex: 1;" />
+        </div>
+        
+        <div class="mb-3">
+            <button type="button" class="btn btn-primary btn-sm add-bgp-network">Добавить сеть</button>
+        </div>
+        
+        <ul class="list-group mb-2 bgp-networks-list">
+            </ul>
+
+        <hr class="mb-3 mt-3">
+
+        <h6 class="mb-3">Neighbors</h6>
+        <div class="mb-2 d-flex align-items-center">
+            <label class="form-label me-3" style="width: 150px;" for="bgpNeighborIp">IP соседа:</label>
+            <input type="text" class="form-control bgp-neighbor-ip" id="bgpNeighborIp" placeholder="10.0.12.2" style="flex: 1;" />
+        </div>
+
+        <div class="mb-2 d-flex align-items-center">
+            <label class="form-label me-3" style="width: 150px;" for="bgpNeighborAs">Remote AS:</label>
+            <input type="number" class="form-control bgp-neighbor-as" id="bgpNeighborAs" placeholder="65002" style="flex: 1;" />
+        </div>
+
+        <div class="mb-2 d-flex align-items-center">
+            <label class="form-label me-3" style="width: 150px;" for="bgpNeighborWeight">Weight (опционально):</label>
+            <input type="number" class="form-control bgp-neighbor-weight" id="bgpNeighborWeight" placeholder="" style="flex: 1;" />
+        </div>
+
+        <div class="mb-3">
+            <button class="btn btn-primary btn-sm add-bgp-neighbor">Добавить соседа</button>
+        </div>
+
+        <ul class="list-group bgp-neighbors-list">
+            </ul>
+    </div>
+</script>
