@@ -400,6 +400,7 @@ const ShowRouterConfig = function(n, shared = 0){
     }
 
     ConfigVxlan(n);
+    ConfigBgp(n);
 
     if (shared){
         DisableFormInputs();
@@ -530,6 +531,7 @@ const ShowSwitchConfig = function(n, shared = 0){
     if (shared){
         DisableFormInputs();
         DisableVLANInputs(n);
+        DisableBGPInputs(n);
     }
 }
 

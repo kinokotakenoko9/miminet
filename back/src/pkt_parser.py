@@ -126,6 +126,8 @@ def ip_packet_type(pkt) -> str:
         active_flags = filter(lambda t: t[0] & tcp.flags, d.items())
         flags_str = " + ".join(t[1] for t in active_flags)
 
+        result = "TCP (" + str(flags_str) + ") " + str(tcp.sport) + " > " + str(tcp.dport)
+
         is_bgp = tcp.dport == 179 or tcp.sport == 179
         if is_bgp:
             bgp_payload = tcp.data
@@ -139,8 +141,6 @@ def ip_packet_type(pkt) -> str:
                     4: "KEEPALIVE",
                 }
                 result = "BGP " + bgp_type_names[bgp_type] + " (" + str(flags_str) + ") " + str(tcp.sport) + " > " + str(tcp.dport)
-        else: 
-            result = "TCP (" + str(flags_str) + ") " + str(tcp.sport) + " > " + str(tcp.dport)
 
         return result
 

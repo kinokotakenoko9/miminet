@@ -124,7 +124,7 @@ class MiminetTopology(IPTopo):
         self.__nodes[node_id] = router
 
         if config.bgp is not None:
-            self.__set_network_configuration_time(15)
+            self.__set_network_configuration_time(10)
 
     def __find_interface(
         self, edge_id: str, node_interfaces: list[NodeInterface]
@@ -159,6 +159,43 @@ class MiminetTopology(IPTopo):
                 continue
             # Caches node by ID for quick lookup later
             self.__id_to_node[node.data.id] = node
+
+            if node.config.bgp:
+                print(f"BGP ON ROUTER {node.data.label}\n\n\n")
+                print(node.config.bgp)
+
+            # # TODO: removeme
+            # if node.data.label == "router_1":
+            #     node.config.bgp = BGPConfig(
+            #         local_asn="65001",
+            #         router_id="1.1.1.1",
+            #         networks=["192.168.1.0/24"],
+            #         neighbors=[
+            #             BGPNeighbor("10.0.12.2", "65002"), # Link to R2
+            #             BGPNeighbor("10.0.13.3", "65003")  # Link to R3
+            #         ]
+            #     )
+            # elif node.data.label == "router_2":
+            #     node.config.bgp = BGPConfig(
+            #         local_asn="65002",
+            #         router_id="2.2.2.2",
+            #         networks=[],
+            #         neighbors=[
+            #             BGPNeighbor("10.0.12.1", "65001"), # Link to R1
+            #             BGPNeighbor("10.0.23.3", "65003")  # Link to R3
+            #         ]
+            #     )
+            # elif node.data.label == "router_3":
+            #     node.config.bgp = BGPConfig(
+            #         local_asn="65003",
+            #         router_id="3.3.3.3",
+            #         networks=["192.168.3.0/24"],
+            #         neighbors=[
+            #             BGPNeighbor("10.0.13.1", "65001"), # Link to R1
+            #             BGPNeighbor("10.0.23.2", "65002", "500")  # Link to R2
+            #         ]
+            #     )
+            # TODO: removeme
 
             self.__handle_node(node)
 
