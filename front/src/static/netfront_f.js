@@ -828,6 +828,11 @@ const prepareStylesheet = function() {
             label = label + '\n' + 'gw:' + n.config.default_gw;
         }
 
+        if (n.config.bgp)
+        {
+            label = label + '\n' + 'AS ' + n.config.bgp.local_asn;
+        }
+
         $.each(jobs, function (i) {
             let j = jobs[i];
 

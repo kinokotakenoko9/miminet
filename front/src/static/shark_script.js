@@ -497,6 +497,53 @@ function decode_gre_header (gre_hdr) {
     return ret_val;
 }
 
+function decode_bgp_header(bgp_hdr) {
+    if (bgp_hdr.length < 19) return {};
+
+    const type_code = bgp_hdr.slice(18, 19).join('');
+    let type_string = 'Unknown';
+    if (type_code === '01') type_string = '1 (OPEN)';
+    else if (type_code === '02') type_string = '2 (UPDATE)';
+    else if (type_code === '04') type_string = '4 (KEEPALIVE)';
+
+    const result = {
+        'Marker:': { value: bgp_hdr.slice(0, 16).join(''), offset: 0, length: 16 },
+        'Length:': { value: parseInt(bgp_hdr.slice(16, 18).join(''), 16), offset: 16, length: 2 },
+        'Type:': { value: type_string, offset: 18, length: 1 },
+    };
+
+    if (type_code === '01' && bgp_hdr.length >= 29) {
+        result['Version:'] = { value: parseInt(bgp_hdr[19], 16), offset: 19, length: 1 };
+        result['My AS:'] = { value: parseInt(bgp_hdr.slice(20, 22).join(''), 16), offset: 20, length: 2 };
+        result['Hold Time:'] = { value: parseInt(bgp_hdr.slice(22, 24).join(''), 16), offset: 22, length: 2 };
+        result['BGP Identifier:'] = { value: hex_to_ip(bgp_hdr.slice(24, 28)), offset: 24, length: 4 };
+    } else if (type_code === '02') {
+        let current_ptr = 19;
+
+        const withdrawn_len = parseInt(bgp_hdr.slice(current_ptr, current_ptr + 2).join(''), 16);
+        result['Withdrawn Routes Length:'] = { value: withdrawn_len, offset: current_ptr, length: 2 };
+        current_ptr += 2 + withdrawn_len;
+
+        if (bgp_hdr.length >= current_ptr + 2) {
+            const attr_len = parseInt(bgp_hdr.slice(current_ptr, current_ptr + 2).join(''), 16);
+            result['Path Attribute Length:'] = { value: attr_len, offset: current_ptr, length: 2 };
+            current_ptr += 2;
+
+            if (attr_len > 0) {
+                result['Path Attributes:'] = { value: `${attr_len} bytes`, offset: current_ptr, length: attr_len };
+            }
+            current_ptr += attr_len;
+        }
+
+        const nlri_len = bgp_hdr.length - current_ptr;
+        if (nlri_len > 0) {
+            result['NLRI:'] = { value: `${nlri_len} bytes`, offset: current_ptr, length: nlri_len };
+        }
+    }   
+
+    return result;
+}
+
 function add_ethernet_header (pkt, header_number, offset=0) {
 
     make_pa("Ethernet Frame", header_number);
@@ -871,6 +918,40 @@ function add_gre_header(pkt, header_number, offset = 0) {
     };
 }
 
+function add_bgp_header(pkt, header_number, offset = 0) {
+    make_pa("Border Gateway Protocol", header_number);
+    const decode_div = make_div(header_number);
+
+    const pkt_decode = decode_bgp_header(pkt);
+    const fields = [];
+
+    for (const k in pkt_decode) {
+        const field = pkt_decode[k];
+
+        const decode_p = document.createElement("p");
+        decode_p.innerHTML = `${k} ${field.value}`;
+        decode_div.appendChild(decode_p);
+
+        fields.push({
+            label: k,
+            value: field.value,
+            offset: field.offset,
+            len: field.length,
+            className: toHoverKey(k),
+            startByte: field.offset
+        });
+    }
+    decode.appendChild(decode_div);
+
+    return {
+        className: "Border Gateway Protocol",
+        startByte: offset,
+        byteCount: pkt.length,
+        fields, 
+        header_number,
+    };
+}
+
 function add_payload_info(pkt, header_len, decode_div, fields, offset = 0) {
     const payload_bytes = pkt.length - header_len;
     
@@ -959,10 +1040,6 @@ function decode_packet(pkt) {
 			let ip_hdr_len = parseInt(pkt.slice(0,1).toString().split("")[1], 16) * 4;
 			let ip_offset = parseInt(pkt.slice(6, 8).join(""), 16) & 8191;
 
-			// Don't parse if IP offset not 0.  
-			if (false) {
-				return headers;
-			}
 
 			// Drop IP header
 			pkt = pkt.slice(ip_hdr_len);
@@ -976,9 +1053,25 @@ function decode_packet(pkt) {
 			
 			// TCP
 			} else if (ip_protocol === "06") {
+                const dataOffset = (parseInt(pkt[12], 16) >> 4) * 4;
+
 				const tcp = add_tcp_header(pkt, header_number, current_offset);
                 headers.push(tcp);
 				header_number = header_number + 1;
+
+                const bgp_pkt = pkt.slice(dataOffset)
+
+                current_offset += tcp.byteCount
+
+                const srcPort = parseInt(pkt.slice(0, 2).join(''), 16);
+                const dstPort = parseInt(pkt.slice(2, 4).join(''), 16);
+
+                if ((srcPort === 179 || dstPort === 179) && bgp_pkt.length >= 19) {
+                    const bgp = add_bgp_header(bgp_pkt, header_number, current_offset);
+                    headers.push(bgp);
+                    header_number++;
+                }
+
 				break;
 			
 			// UDP
