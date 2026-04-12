@@ -129,7 +129,7 @@ def ip_packet_type(pkt) -> str:
                     2: "UPDATE",
                     4: "KEEPALIVE",
                 }
-                result = "BGP " + bgp_type_names[bgp_type] + " (" + str(flags_str) + ") " + str(tcp.sport) + " > " + str(tcp.dport)
+                result = "BGP " + bgp_type_names[bgp_type] + " " + str(tcp.sport) + " > " + str(tcp.dport)
 
         return result
 
@@ -309,17 +309,6 @@ def packet_parser(
                         inner_ip = inner_eth.data
                         if isinstance(inner_ip.data, dpkt.igmp.IGMP):
                             continue
-
-            # # Skip BGP UPDATE?
-            # if isinstance(ip.data, dpkt.tcp.TCP):
-            #     tcp = ip.data
-            #     if tcp.dport == 179 or tcp.sport == 179:
-            #         bgp_payload = tcp.data
-            #         # BGP header at least 19 bytes
-            #         if len(bgp_payload) >= 19:
-            #             bgp_type = bgp_payload[18]
-            #             if bgp_type == 2:
-            #                 continue
 
             ts = str(timestamp)
             ts = ts.replace(".", "").ljust(16, "0")
