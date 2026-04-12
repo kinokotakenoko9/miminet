@@ -1053,20 +1053,22 @@ function decode_packet(pkt) {
 			
 			// TCP
 			} else if (ip_protocol === "06") {
-                const dataOffset = (parseInt(pkt[12], 16) >> 4) * 4;
-
 				const tcp = add_tcp_header(pkt, header_number, current_offset);
                 headers.push(tcp);
 				header_number = header_number + 1;
 
-                const bgp_pkt = pkt.slice(dataOffset)
-
-                current_offset += tcp.byteCount
-
                 const srcPort = parseInt(pkt.slice(0, 2).join(''), 16);
                 const dstPort = parseInt(pkt.slice(2, 4).join(''), 16);
 
+                const tcp_hdr_len = (parseInt(pkt[12], 16) >> 4) * 4;
+
+                // BGP
+                const bgp_pkt = pkt.slice(tcp_hdr_len)
+
                 if ((srcPort === 179 || dstPort === 179) && bgp_pkt.length >= 19) {
+                    tcp.byteCount = tcp_hdr_len
+                    tcp.fields = tcp.fields.filter(f => f.label !== 'TCP Segment Data:');
+                    current_offset += tcp_hdr_len;
                     const bgp = add_bgp_header(bgp_pkt, header_number, current_offset);
                     headers.push(bgp);
                     header_number++;
