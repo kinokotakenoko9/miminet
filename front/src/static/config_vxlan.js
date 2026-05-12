@@ -19,7 +19,7 @@ const ConfigVxlan = function (currentDevice) {
     modalHTML = modalHTML.replace('id="VxlanModal"', 'id="' + modalId + '"');
     tableHTML = tableHTML.replace('id="config_table_vxlan"', 'id="' + tableId + '"');
 
-    var buttonElem = $(buttonHTML).insertAfter('#config_router_name');
+    var buttonElem = $(buttonHTML).insertAfter('#router_advanced_buttons_container');
 
     buttonElem.attr('data-bs-target', '#' + modalId);
 

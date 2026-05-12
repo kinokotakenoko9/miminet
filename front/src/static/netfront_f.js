@@ -371,6 +371,9 @@ const ShowRouterConfig = function(n, shared = 0){
         ConfigRouterForm(n.data.id);
     }
 
+    // Add advanced section
+    ConfigRouterAdvanced();
+
     // Add hostname
     ConfigRouterName(hostname);
 
@@ -405,6 +408,7 @@ const ShowRouterConfig = function(n, shared = 0){
     if (shared){
         DisableFormInputs();
         DisableVXLANInputs(n);
+        DisableBGPInputs(n);
     }
 }
 
@@ -531,7 +535,6 @@ const ShowSwitchConfig = function(n, shared = 0){
     if (shared){
         DisableFormInputs();
         DisableVLANInputs(n);
-        DisableBGPInputs(n);
     }
 }
 

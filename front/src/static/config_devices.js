@@ -795,6 +795,13 @@ const ConfigRouterName = function (hostname) {
     $('#config_router_name').val(hostname);
 }
 
+const ConfigRouterAdvanced = function () {
+
+    var text = document.getElementById('config_router_advanced_script').innerHTML;
+
+    $(config_main_form_id).prepend((text));
+}
+
 const ConfigServerName = function (hostname) {
 
     var text = document.getElementById('config_server_name_script').innerHTML;
